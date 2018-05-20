@@ -1,6 +1,5 @@
 // ==UserScript==
 // @name            Steam-TradingCardsBulkBuyerMAX
-// @namespace       http://
 // @version         1.0
 // @description     Provides a button to purchase remaining cards needed for craft a maximum level badge
 // @match           *://steamcommunity.com/*/gamecards/*
