@@ -79,10 +79,10 @@ function updatePrices() {
         card = $(card);
 
         var cardText = card.find('.badge_card_set_text')[0].textContent;
-        var quantity = cardText.match(/\((\d+)\)/);
+        var quantity = cardText.match(/\((\d+)\)\r?\n|\r/);
         if (quantity) {
-            cardText = cardText.split(')').pop();
             quantity = parseInt(quantity[1], 10);
+            cardText = cardText.substring(cardText.indexOf(')') + 1);
         } else {
             quantity = 0;
         }
