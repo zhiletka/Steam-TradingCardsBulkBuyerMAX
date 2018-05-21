@@ -8,14 +8,6 @@
 // @grant           none
 // ==/UserScript==
 
-//
-// KNOWN ISSUES:
-//
-// OBSERVATORY (5) $0.15 - You cannot buy any items until your previous action completes.
-// Infinite canceling of some active orders {success: 40, error: "Cannot process this request until your other request completes."}. Anyway they become canceled after page reload.
-// let prices = $(cards[i]).data('history').prices conflicts with original script "Uncaught TypeError: Cannot read property 'prices' of undefined".
-//
-
 $.ajaxSetup({
     cache: false, // ???
     xhrFields: {

@@ -1,0 +1,8 @@
+TODO/KNOWN ISSUES:
+
+1. OBSERVATORY (5) $0.15 - You cannot buy any items until your previous action completes.
+2. PURCHASED status set even 1 of 5 cards was bought.
+3. Infinite canceling of some active orders {success: 40, error: "Cannot process this request until your other request completes."}. Anyway they become canceled after page reload.
+4. let prices = $(cards[i]).data('history').prices conflicts with original script "Uncaught TypeError: Cannot read property 'prices' of undefined".
+5. Sometimes sell_order_graph contains fewer records than card actually has on its page, for example https://steamcommunity.com/id/zhiletka/gamecards/554640.
+6. "No listings..." status is actual only when hashName = null, add new status "You're not logged in" when sessionID = null.
