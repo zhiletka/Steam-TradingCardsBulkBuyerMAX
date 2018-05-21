@@ -32,10 +32,9 @@ var g_CurrencyInfo = {
 // Default history analyze range
 var g_HistoryRangeDays = 14;
 
-// Initialize current badge settings
+// Initialize default badge settings
 var g_BadgeLevel = 0;
 var g_BadgeMaxLevel = 5;
-var g_FoilCardsSuffix = "%20%28Foil%29";
 
 $(document).ready(function() {
     // Ensure that the page is loaded in HTTPS (Issue #19)
@@ -52,7 +51,7 @@ if ($('.badge_card_set_card').length && $('.badge_info').length) {
     }
 
     // Set max level to 1 for a Foil badge
-    if ($('body').html().indexOf(g_FoilCardsSuffix) >= 0) {
+    if (document.documentURI.includes('border=1')) {
         g_BadgeMaxLevel = 1;
     }
 
@@ -97,20 +96,17 @@ function updatePrices() {
 
         row.data('quantity', quantity);
 
+        setCardStatus(row, 'Loading...');
+
         var appID = document.documentURI.match(/gamecards\/(\d+)/);
         var cardPageUrl = 'https://steamcommunity.com/market/listings/753/' + appID[1] + '-' + encodeURIComponent(cardName);
-        if (g_BadgeMaxLevel == 1) {
-            cardPageUrl += g_FoilCardsSuffix;
-        }
-
-        setCardStatus(row, 'Loading...');
 
         // Some cards have "(Trading Card)" suffix in their urls
         // We can't detect card url when it bought and no market button is shown, so the solution is to try original url first, and then the alternative one
-        cardPageAjaxRequest([cardPageUrl + ' (Trading Card)', cardPageUrl]);
+        cardPageAjaxRequest(g_BadgeMaxLevel > 1 ? [cardPageUrl + ' (Trading Card)', cardPageUrl] : [cardPageUrl + ' (Foil Trading Card)', cardPageUrl + ' (Foil)']);
 
         function cardPageAjaxRequest(urls) {
-            // Assuming all possible card urls returned g_sessionID = null
+            // Assuming that all possible card pages returned null marketID/sessionID/hashName
             if (urls.length == 0) {
                 setCardStatusError(row, 'There are no listings for this item');
                 return;
@@ -124,7 +120,12 @@ function updatePrices() {
                 var hashName = html.match(/"market_hash_name":"([^"]+)"/);
                 var oldOrderID = html.match(/CancelMarketBuyOrder\(\D*(\d+)\D*\)/);
 
-                if (!marketID || !sessionID || !countryCode || !currency || !hashName) {
+                if (!currency || !countryCode) {
+                    setCardStatusError(row, 'Not logged in');
+                    return;
+                }
+
+                if (!marketID || !sessionID || !hashName) {
                     return cardPageAjaxRequest(urls);
                 }
 
@@ -304,6 +305,7 @@ function placeBuyOrder() {
 
             card.data('buy_orderid', json.buy_orderid);
             card.data('checks', 0);
+            card.data('checks_max', $('#bb_changemode').is(':checked') ? 10 : 2);
 
             setCardStatus(card, 'Waiting...');
             checkOrderStatus(card);
@@ -314,13 +316,13 @@ function placeBuyOrder() {
 function checkOrderStatus(card) {
     $.get('/market/getbuyorderstatus/', {"sessionid": g_SessionID, "buy_orderid": card.data('buy_orderid')}).always(function(json) {
         if (json && json.success === 1) {
-            if (json.purchases.length) {
-                setCardStatus(card, 'PURCHASED');
+            if (json.quantity_remaining == 0) {
+                setCardStatusSuccess(card, 'Purchased');
                 return;
             } else {
                 card.data('checks', card.data('checks') + 1);
-                if (card.data('checks') >= 7) {
-                    setCardStatus(card, 'ORDER UNFULFILLED');
+                if (card.data('checks') >= card.data('checks_max')) {
+                    setCardStatusSuccess(card, 'Order placed');
                     return;
                 }
             }
@@ -372,6 +374,11 @@ function setCardStatusError(card, status) {
     card.removeClass();
 }
 
+function setCardStatusSuccess(card, status) {
+    setCardStatus(card, status);
+    card.css('color', 'YellowGreen');
+}
+
 function priceToString(price, cents) {
     if (cents) {
         price = parseInt(price, 10) / 100;
@@ -412,7 +419,7 @@ function getOptimumPrice(histogram, history, quantity) {
         }
     }
 
-    return [3, 0, 'No buy or sell orders to analyze'];
+    return [3, 0, 'No buy/sell orders to analyze'];
 }
 
 function getImmediatePrice(histogram, history, quantity) {
@@ -436,5 +443,5 @@ function getImmediatePrice(histogram, history, quantity) {
         }
     }
 
-    return [maxPrice, maxPrice * quantity - total, 'Not enough sell orders (' + quantityLeft + ')'];
+    return [maxPrice, maxPrice * quantity - total, 'Not enough ' + quantityLeft + ' sell orders'];
 }
