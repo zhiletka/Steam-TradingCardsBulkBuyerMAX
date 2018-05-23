@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Steam-TradingCardsBulkBuyerMAX
-// @version         1.0
+// @version         1.01
 // @description     Provides a button to purchase remaining cards needed for craft a maximum level badge
 // @match           *://steamcommunity.com/*/gamecards/*
 // @require         https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
@@ -117,7 +117,7 @@ function updatePrices() {
                 var sessionID = html.match(/g_sessionID = "(.+)";/);
                 var countryCode = html.match(/g_strCountryCode = "([a-zA-Z0-9]+)";/);
                 var currency = html.match(/"wallet_currency":(\d+)/);
-                var hashName = html.match(/"market_hash_name":"([^"]+)"/);
+                var hashName = html.match(/"market_hash_name":"((?:[^"\\]|\\.)*)"/);
                 var oldOrderID = html.match(/CancelMarketBuyOrder\(\D*(\d+)\D*\)/);
 
                 if (!currency || !countryCode) {
@@ -131,6 +131,9 @@ function updatePrices() {
 
                 g_Currency = currency[1];
                 g_SessionID = sessionID[1];
+
+                // Unescape quotes and unicode characters in hash names like "461280-\"Cool Kids\" Hangout" and "554640-\u901a\u7f09\u677f"
+                hashName[1] = decodeURIComponent(JSON.parse('"' + hashName[1] + '"'));
 
                 $.get('/market/itemordershistogram', {"country": countryCode[1], language: 'english', "currency": g_Currency, "item_nameid": marketID[1]}).always(function(histogram) {
                     if (!histogram || !histogram.success) {
