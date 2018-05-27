@@ -23,4 +23,4 @@ It adds the following features to the each Steam Badge page:
 
 ### Notes
 
-Thanks to Dr. McKay for [Steam Trading Cards Bulk Buyer](https://bitbucket.org/Doctor_McKay/steam-trading-card-bulk-buyer) script that was used for basis and inspiration, [Nuklon](https://github.com/Nuklon) with his [Steam Economy Enhancer](https://github.com/Nuklon/Steam-Economy-Enhancer) for main page ideas, and [10101000](https://github.com/10101000) for [Steam-AutoCraft](https://github.com/10101000/Steam-AutoCraft) that just saved me a lot of time.
+Thanks to Dr. McKay for [Steam Trading Cards Bulk Buyer](https://bitbucket.org/Doctor_McKay/steam-trading-card-bulk-buyer) script that was used for basis and inspiration, [Nuklon](https://github.com/Nuklon) with his [Steam Economy Enhancer](https://github.com/Nuklon/Steam-Economy-Enhancer) for home page idea, and [10101000](https://github.com/10101000) for [Steam-AutoCraft](https://github.com/10101000/Steam-AutoCraft) that just saved me a lot of time.
