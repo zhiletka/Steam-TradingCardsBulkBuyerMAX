@@ -1,7 +1,8 @@
 // ==UserScript==
 // @name            Steam-TradingCardsBulkBuyerMAX
-// @version         1.01
-// @description     Provides a button to purchase remaining cards needed for craft a maximum level badge
+// @version         1.02
+// @description     A free userscript to purchase remaining cards needed for a maximum level badge in bulk
+// @author          Zhiletka
 // @match           *://steamcommunity.com/*/gamecards/*
 // @require         https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js
 // @copyright       2018 Zhiletka. Contains parts of the Steam Trading Cards Bulk Buyer script © 2013 - 2015 Dr. McKay
@@ -88,7 +89,7 @@ function updatePrices() {
         var cardName = cardText.replace(/\t|\r?\n|\r/g, '');
 
         if ($('#bb_panel').html().length == 0) {
-            $('#bb_panel').append('<div class="badge_title_rule"/><div class="badge_title">Steam Trading Cards Bulk Buyer</div><br/>');
+            $('#bb_panel').append('<div class="badge_title_rule"/><div class="badge_title">Steam Trading Cards Bulk Buyer MAX</div><br/>');
         }
 
         var row = $('<div class="bb_cardrow" style="padding-bottom: 3px; opacity: 0.4"><label><input class="bb_cardcheckbox" type="checkbox" style="margin: 0; vertical-align: bottom; position: relative; top: -1px" checked onchange="bb_cardcheckbox_change()"/><script>function bb_cardcheckbox_change() { $("#bb_changemode").change(); }</script><span class="bb_cardname" style="padding-right: 10px; text-align: right; display: inline-block; font-weight: bold">' + cardName + ' (' + quantity + ')</span></label><span class="bb_cardprice" data-name="' + cardName.replace(/"/g, '&quot;') + '"/></div>');
@@ -341,9 +342,11 @@ function cancelBuyOrder(orderid, callback) {
     $.post('/market/cancelbuyorder/', {"sessionid": g_SessionID, "buy_orderid": orderid}).always(function(json) {
         if (json && json.success === 1) {
             callback(json);
-        } else setTimeout(function() {
-            cancelBuyOrder(orderid, callback);
-        }, 500);
+        } else {
+            setTimeout(function() {
+                cancelBuyOrder(orderid, callback);
+            }, 500);
+        }
     });
 }
 
