@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name            Steam-TradingCardsBulkBuyerMAX
-// @version         1.02
+// @version         1.03
 // @description     A free userscript to purchase remaining cards needed for a maximum level badge in bulk
 // @author          Zhiletka
 // @match           *://steamcommunity.com/*/gamecards/*
@@ -194,7 +194,7 @@ function updatePrices() {
                             row.data('old_orderdata', ' <span style="opacity: 0.5"><strike>' + oldOrderData[1] + ' x ' + priceToString(Number(oldOrderData[2])) + ' order</strike></span>');
                         }
 
-                        setCardStatus(row, priceToString(price[0] * quantity - price[1], true) + g_StatusSeparator + price[2] + (card.data('old_orderdata') ? card.data('old_orderdata') : ''));
+                        setCardStatus(row, priceToString(price[0] * quantity - price[1], true) + g_StatusSeparator + price[2] + (row.data('old_orderdata') ? row.data('old_orderdata') : ''));
                         row.css('opacity', 1);
 
                         row.addClass('ready');
